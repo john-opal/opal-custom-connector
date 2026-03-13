@@ -1,0 +1,9 @@
+services:
+  connector:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      # Set this to the signing secret from the Opal UI.
+      # Leave empty to skip signature verification during local development.
+      - OPAL_SIGNING_SECRET=
