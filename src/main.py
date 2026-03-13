@@ -166,5 +166,13 @@ async def get_group_resources(group_id: str, app_id: str, cursor: str = None):
     g = state.groups.get(group_id)
     if not g:
         raise ErrorException(code=404, message=f"Group {group_id} not found")
-    # This connector has no resources, so groups always have an empty resource list
+    return {"resources": []}
+
+
+# ---------------------------------------------------------------------------
+# Resources (stub — this connector has no resources)
+# ---------------------------------------------------------------------------
+
+@app.get("/resources")
+async def get_resources(app_id: str, cursor: str = None, parent_id: str = None):
     return {"resources": []}
