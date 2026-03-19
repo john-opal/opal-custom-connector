@@ -8,7 +8,7 @@ The single group "app-access" controls who has access to the app.
 """
 
 # Users are empty — Opal will provision them via POST /users when access is approved
-users: dict = {}
+users: dict = {"john@opal.dev"}
 
 # The single group for this app
 groups: dict = {
