@@ -31,7 +31,7 @@ while getopts ":u:s:h" opt; do
   esac
 done
 
-# Build the required auth headers.
+# Build the required auth headers into the HEADERS array.
 # When OPAL_SIGNING_SECRET is empty the connector skips verification but
 # FastAPI still requires the headers to be present.
 make_headers() {
@@ -39,13 +39,14 @@ make_headers() {
   local ts
   ts=$(date +%s)
 
+  HEADERS=(-H "X-Opal-Request-Timestamp: ${ts}")
   if [[ -n "$SIGNING_SECRET" ]]; then
     local signing_string="v0:${ts}:${body}"
     local sig
     sig=$(printf '%s' "$signing_string" | openssl dgst -sha256 -hmac "$SIGNING_SECRET" -hex | awk '{print $NF}')
-    echo -H "X-Opal-Request-Timestamp: ${ts}" -H "X-Opal-Signature: ${sig}"
+    HEADERS+=(-H "X-Opal-Signature: ${sig}")
   else
-    echo -H "X-Opal-Request-Timestamp: ${ts}" -H "X-Opal-Signature: dev"
+    HEADERS+=(-H "X-Opal-Signature: dev")
   fi
 }
 
@@ -60,11 +61,11 @@ hr
 echo
 echo "▶ GET /users  (all provisioned users)"
 hr
-eval curl -sf $(make_headers) \
-  "'${BASE_URL}/users?app_id=${APP_ID}'" | python3 -m json.tool
+make_headers
+curl -sf "${HEADERS[@]}" "${BASE_URL}/users?app_id=${APP_ID}" | python3 -m json.tool
 
 echo
 echo "▶ GET /groups/app-access/users  (group members)"
 hr
-eval curl -sf $(make_headers) \
-  "'${BASE_URL}/groups/app-access/users?app_id=${APP_ID}'" | python3 -m json.tool
+make_headers
+curl -sf "${HEADERS[@]}" "${BASE_URL}/groups/app-access/users?app_id=${APP_ID}" | python3 -m json.tool
