@@ -12,6 +12,9 @@ access to the app. Opal will:
      when they are fully removed.
 """
 
+from dotenv import load_dotenv
+load_dotenv()
+
 from fastapi import Depends, FastAPI, Request
 from fastapi.responses import JSONResponse
 
