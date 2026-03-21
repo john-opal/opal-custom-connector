@@ -48,7 +48,7 @@ async def get_signature_headers(
         raise ErrorException(code=401, message="Request timestamp is too old")
 
     body = await request.body()
-    body_str = body.decode("utf-8") if body else "{}"
+    body_str = body.decode("utf-8").strip() if body else "{}"
 
     signing_string = f"v0:{x_opal_request_timestamp}:{body_str}"
     expected = hmac.new(
